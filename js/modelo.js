@@ -12,7 +12,6 @@ var margins = {
 
 var pagina = null
 var baixar = {}
-var lista_graficos = 0
 
 var chave_planilha = "1oG6YX-OUU4wcIjMKbcaX7htfOQkwQRP6HWcUx4dvhlk"
 var url_base = "https://spreadsheets.google.com/feeds/cells/"+chave_planilha+"/"
@@ -47,7 +46,7 @@ var le_planilha = function(d) {
 }
 
 var baixa_planilha_dados = function (sheet, callback) {
-    var feed = $.getJSON(url_base+sheet+url_final, function  (d) {
+    $.getJSON(url_base+sheet+url_final, function  (d) {
         var dados = le_planilha(d)
         var saida = []
         for (key in dados) {
@@ -59,7 +58,7 @@ var baixa_planilha_dados = function (sheet, callback) {
 }
 
 var iniciar = function() {
-    var feed = $.getJSON(url_base + 1 + url_final, function (d) {
+    $.getJSON(url_base + 1 + url_final, function (d) {
         pagina = le_planilha(d)
         cria_tags()
         for (index in baixar) {
@@ -93,6 +92,7 @@ var cria_tags = function (callback) {
                     var index = item["num_planilha_dados"]
                     el.append("<div id=grafico"+contador_graficos+"></div>")
                     baixar[contador_graficos] = {
+                        contador:contador_graficos,
                         posicao:index,
                         tipo_grafico:item["tipo_grafico"],
                         x:item["x"],
@@ -119,10 +119,8 @@ function desenha_grafico(item) {
             tipo_x = item["tipo_x"],
             y = item["y"],
             tipo_y = item["tipo_y"]
-            serie = item["serie"]
-
-        var index = window.lista_graficos
-        window.lista_graficos++
+            serie = item["serie"],
+            index = item["contador"]
 
         var svg = dimple.newSvg("#grafico"+index, width, height);
         var myChart = new dimple.chart(svg, dados);
