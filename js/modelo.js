@@ -1,7 +1,6 @@
 /**
  * Created by rodrigoburg on 09/02/15.
  */
-var dados = null
 var width = 500
 var height = 500
 var margins = {
@@ -10,7 +9,7 @@ var margins = {
     right:70,
     top:20
 }
-var grafico = null
+
 var pagina = null
 var baixar = {}
 var lista_graficos = 0
@@ -18,7 +17,6 @@ var lista_graficos = 0
 var chave_planilha = "1oG6YX-OUU4wcIjMKbcaX7htfOQkwQRP6HWcUx4dvhlk"
 var url_base = "https://spreadsheets.google.com/feeds/cells/"+chave_planilha+"/"
 var url_final = "/public/values?alt=json"
-// ao carregar os dados da planilha...
 
 var le_planilha = function(d) {
     var cells = d.feed.entry; // d são os dados recebidos do Google...
@@ -61,13 +59,11 @@ var baixa_planilha_dados = function (sheet, callback) {
 }
 
 var iniciar = function() {
-    var feed = $.getJSON(url_base+1+url_final, function  (d){
+    var feed = $.getJSON(url_base + 1 + url_final, function (d) {
         pagina = le_planilha(d)
         cria_tags()
         for (index in baixar) {
-            baixa_planilha_dados(baixar[index], function (dados) {
-                desenha_grafico(dados)
-            })
+            desenha_grafico(baixar[index])
         }
     })
 }
@@ -96,7 +92,15 @@ var cria_tags = function (callback) {
                 if ("num_planilha_dados" in item) {
                     var index = item["num_planilha_dados"]
                     el.append("<div id=grafico"+contador_graficos+"></div>")
-                    baixar[contador_graficos] = index
+                    baixar[contador_graficos] = {
+                        posicao:index,
+                        tipo_grafico:item["tipo_grafico"],
+                        x:item["x"],
+                        tipo_x:item["tipo_x"],
+                        y:item["y"],
+                        tipo_y:item["tipo_y"],
+                        serie:item["serie"]
+                    },
                     contador_graficos++
                 }
             }
@@ -108,33 +112,57 @@ var cria_tags = function (callback) {
 
 }
 
-function desenha_grafico(dados) {
-    var index = window.lista_graficos
-    window.lista_graficos++
+function desenha_grafico(item) {
+    baixa_planilha_dados(item["posicao"], function (dados) {
+        var tipo_grafico = item["tipo_grafico"],
+            x = item["x"],
+            tipo_x = item["tipo_x"],
+            y = item["y"],
+            tipo_y = item["tipo_y"]
+            serie = item["serie"]
 
-    var svg = dimple.newSvg("#grafico"+index, width, height);
-    var myChart = new dimple.chart(svg, dados);
+        var index = window.lista_graficos
+        window.lista_graficos++
+
+        var svg = dimple.newSvg("#grafico"+index, width, height);
+        var myChart = new dimple.chart(svg, dados);
 
 
-    myChart.setBounds(margins.left, margins.top, width - margins.right, height - margins.bottom);
-    var x = myChart.addCategoryAxis("x", "ano");
-    x.title = ""
-    var y = myChart.addMeasureAxis("y", "gasto_fies");
-    //y.overrideMax = 20000000000.0
+        myChart.setBounds(margins.left, margins.top, width - margins.right, height - margins.bottom);
+        if (tipo_x == "valor") {
+            var x = myChart.addMeasureAxis("x", x);
+        } else if (tipo_x == "categorico" || tipo_x == "categórico" || tipo_x == "categoria" || tipo_x == "categorica" || tipo_x == "categórica") {
+            var x = myChart.addCategoryAxis("x", x);
+        }
 
-    var series = myChart.addSeries(null, dimple.plot.bar);
-    //series.lineWeight = 1.8;
+        if (tipo_y == "valor") {
+            var y = myChart.addMeasureAxis("y", y);
+        } else if (tipo_y == "categorico" || tipo_y == "categórico" || tipo_y == "categoria" || tipo_y == "categorica" || tipo_y == "categórica") {
+            var y = myChart.addCategoryAxis("y", y);
+        }
+        //y.overrideMax = 20000000000.0
 
-    myChart.draw();
+        var lista_series = []
 
-    //translada labels do eixo x
-    /*x.shapes.selectAll("text").attr("transform",
-        function (d) {
-            return d3.select(this).attr("transform") + " translate(0, 15) rotate(-60)";
-    });*/
+        if (serie) {
+            lista_series = serie.split(",")
+        }
+        if (tipo_grafico == "bar" || tipo_grafico == "barra") {
+            var series = myChart.addSeries(lista_series, dimple.plot.bar);
+        } else if (tipo_grafico == "linha" || tipo_grafico == "line") {
+            var series = myChart.addSeries(lista_series, dimple.plot.line);
+        } else if (tipo_grafico == "dispersão" || tipo_grafico == "dispersao" || tipo_grafico == "scatter") {
+            var series = myChart.addSeries(lista_series, dimple.plot.bubble);
+        }
 
-    window.grafico = myChart
+        //series.lineWeight = 1.8;
+
+        myChart.draw();
+
+    })
 }
+
+
 
 iniciar()
 
