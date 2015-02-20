@@ -86,7 +86,10 @@ var cria_tags = function (callback) {
                     el.append("<p class=titulo>"+item["titulo"]+"</p>")
                 }
                 if ("texto" in item) {
-                    el.append("<p class=texto>"+item["texto"]+"</p>")
+                    var texto = item["texto"].split("<P>")
+                    for (t in texto) {
+                        el.append("<p class=texto>"+texto[t]+"</p>")
+                    }
                 }
                 if ("num_planilha_dados" in item) {
                     var index = item["num_planilha_dados"]
@@ -99,7 +102,8 @@ var cria_tags = function (callback) {
                         tipo_x:item["tipo_x"],
                         y:item["y"],
                         tipo_y:item["tipo_y"],
-                        serie:item["serie"]
+                        serie:item["serie"],
+                        outros:item["outros"]
                     },
                     contador_graficos++
                 }
@@ -120,8 +124,9 @@ function desenha_grafico(item) {
             y = item["y"],
             tipo_y = item["tipo_y"]
             serie = item["serie"],
-            index = item["contador"]
-
+            index = item["contador"],
+            outros = (item["outros"]) ? item["outros"].split(",") : null
+        console.log(outros)
         var svg = dimple.newSvg("#grafico"+index, width, height);
         var myChart = new dimple.chart(svg, dados);
 
@@ -156,6 +161,16 @@ function desenha_grafico(item) {
         //series.lineWeight = 1.8;
 
         myChart.draw();
+
+        if (outros) {
+            if (outros.indexOf("tira_label_x") > -1) {
+                console.log("eieieiie")
+                x.shapes.selectAll("text").remove();
+            }
+            if (outros.indexOf("tira_label_y") > -1 ) {
+                y.shapes.selectAll("text").remove();
+            }
+        }
 
     })
 }
