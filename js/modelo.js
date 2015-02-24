@@ -1,13 +1,13 @@
 /**
  * Created by rodrigoburg on 09/02/15.
  */
-var width = 500
+var width = $("body").width()* 0.75
 var height = 500
 var margins = {
     bottom:70,
     left:50,
     right:70,
-    top:20
+    top:40
 }
 
 var pagina = null
@@ -85,12 +85,6 @@ var cria_tags = function (callback) {
                 if ("titulo" in item) {
                     el.append("<p class=titulo>"+item["titulo"]+"</p>")
                 }
-                if ("texto" in item) {
-                    var texto = item["texto"].split("<P>")
-                    for (t in texto) {
-                        el.append("<p class=texto>"+texto[t]+"</p>")
-                    }
-                }
                 if ("num_planilha_dados" in item) {
                     var index = item["num_planilha_dados"]
                     el.append("<div id=grafico"+contador_graficos+"></div>")
@@ -98,14 +92,22 @@ var cria_tags = function (callback) {
                         contador:contador_graficos,
                         posicao:index,
                         tipo_grafico:item["tipo_grafico"],
+                        titulo_grafico:item["titulo_grafico"],
                         x:item["x"],
                         tipo_x:item["tipo_x"],
                         y:item["y"],
                         tipo_y:item["tipo_y"],
                         serie:item["serie"],
+                        legenda:item["legenda"],
                         outros:item["outros"]
                     },
                     contador_graficos++
+                }
+                if ("texto" in item) {
+                    var texto = item["texto"].split("<P>")
+                    for (t in texto) {
+                        el.append("<p class=texto>"+texto[t]+"</p>")
+                    }
                 }
             }
         }
@@ -119,14 +121,16 @@ var cria_tags = function (callback) {
 function desenha_grafico(item) {
     baixa_planilha_dados(item["posicao"], function (dados) {
         var tipo_grafico = item["tipo_grafico"],
+            titulo_grafico = item["titulo_grafico"],
             x = item["x"],
             tipo_x = item["tipo_x"],
             y = item["y"],
-            tipo_y = item["tipo_y"]
+            tipo_y = item["tipo_y"],
             serie = item["serie"],
+            legenda = item["legenda"],
             index = item["contador"],
             outros = (item["outros"]) ? item["outros"].split(",") : null
-        console.log(outros)
+
         var svg = dimple.newSvg("#grafico"+index, width, height);
         var myChart = new dimple.chart(svg, dados);
 
@@ -139,9 +143,9 @@ function desenha_grafico(item) {
         }
 
         if (tipo_y == "valor") {
-            var y = myChart.addMeasureAxis("y", y);
+            myChart.addMeasureAxis("y", y);
         } else if (tipo_y == "categorico" || tipo_y == "categórico" || tipo_y == "categoria" || tipo_y == "categorica" || tipo_y == "categórica") {
-            var y = myChart.addCategoryAxis("y", y);
+            myChart.addCategoryAxis("y", y);
         }
         //y.overrideMax = 20000000000.0
 
@@ -151,20 +155,33 @@ function desenha_grafico(item) {
             lista_series = serie.split(",")
         }
         if (tipo_grafico == "bar" || tipo_grafico == "barra") {
-            var series = myChart.addSeries(lista_series, dimple.plot.bar);
+            myChart.addSeries(lista_series, dimple.plot.bar);
         } else if (tipo_grafico == "linha" || tipo_grafico == "line") {
-            var series = myChart.addSeries(lista_series, dimple.plot.line);
+            myChart.addSeries(lista_series, dimple.plot.line);
         } else if (tipo_grafico == "dispersão" || tipo_grafico == "dispersao" || tipo_grafico == "scatter") {
-            var series = myChart.addSeries(lista_series, dimple.plot.bubble);
+            myChart.addSeries(lista_series, dimple.plot.bubble);
         }
 
         //series.lineWeight = 1.8;
+        if (legenda == "sim" || legenda == "Sim" || legenda == "SIM") {
+            myChart.addLegend(margins["left"]+10,10, 300, 200)
+        }
 
-        myChart.draw();
+        myChart.defaultColors = [
+            new dimple.color("#95AFBA"),
+            new dimple.color("#C2C094"),
+            new dimple.color("#B89685"),
+            new dimple.color("#FFC09F"),
+            new dimple.color("#E0D3DE")
+
+        ]
+            myChart.draw();
+
+        if (titulo_grafico)
+            coloca_titulo(svg,myChart,titulo_grafico)
 
         if (outros) {
             if (outros.indexOf("tira_label_x") > -1) {
-                console.log("eieieiie")
                 x.shapes.selectAll("text").remove();
             }
             if (outros.indexOf("tira_label_y") > -1 ) {
@@ -175,7 +192,15 @@ function desenha_grafico(item) {
     })
 }
 
-
+function coloca_titulo(svg,grafico,titulo_grafico) {
+    svg.append("text")
+        .attr("x", grafico._xPixels() + grafico._widthPixels() / 2)
+        .attr("y", grafico._yPixels() - 20)
+        .style("text-anchor", "middle")
+        .style("font-family", "sans-serif")
+        .style("font-weight", "bold")
+        .text(titulo_grafico);
+}
 
 iniciar()
 
