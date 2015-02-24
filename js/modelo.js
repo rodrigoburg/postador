@@ -176,6 +176,7 @@ function desenha_grafico(item) {
 
         ]
             myChart.draw();
+        console.log($("body").height())
 
         if (titulo_grafico)
             coloca_titulo(svg,myChart,titulo_grafico)
@@ -203,4 +204,3 @@ function coloca_titulo(svg,grafico,titulo_grafico) {
 }
 
 iniciar()
-

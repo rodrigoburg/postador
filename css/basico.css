@@ -1,6 +1,8 @@
 body {
 font-family: 'pt sans';
 font-size: 13px;
+min-height: 100%;
+
 }
 
 .texto {
@@ -14,7 +16,7 @@ font-size: 13px;
     font-weight: bold;
 }
 
-html,body,#grafico_fies{
+html,#grafico_fies{
     width:100%;
     height:100%;
     margin:0;
