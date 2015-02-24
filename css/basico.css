@@ -2,7 +2,6 @@ body {
 font-family: 'pt sans';
 font-size: 13px;
 min-height: 100%;
-
 }
 
 .texto {
@@ -16,7 +15,13 @@ min-height: 100%;
     font-weight: bold;
 }
 
-html,#grafico_fies{
+html {
+    width:960px;
+    height:100%;
+    margin:0;
+    padding: 0;
+}
+#grafico_fies{
     width:100%;
     height:100%;
     margin:0;
