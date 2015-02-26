@@ -1,0 +1,25 @@
+#!/bin/bash          
+echo ""
+echo "Descompactando arquivos..."
+echo ""
+tar -zxvf postador.tar.gz
+echo "Arquivos descompactados!"
+echo ""
+echo "Por favor, coloque a chave da sua tabela do Google Drive"
+echo "Exemplo: no link https://docs.google.com/spreadsheets/d/1oG6YX-OUU4wcIjMKbcaX7htfOQkwQRP6HWcUx4dvhlk/edit#gid=0..."
+echo "...a chave seria 1oG6YX-OUU4wcIjMKbcaX7htfOQkwQRP6HWcUx4dvhlk"
+echo ""
+read key
+echo 'var chave_planilha = "'$key'"' | cat - ./postador/js/modelo.js > temp && mv temp ./postador/js/modelo.js
+echo ""
+echo 'Chave '$key' adicionada ao arquivo. Agora, digite o nome da página a ser criada:'
+echo ""
+read nome
+mv postador $nome
+echo ""
+echo 'Ok. Tentando subir no servidor...'
+echo ""
+scp -r ./$nome/ edados@estadaodados.com:~/www/blog/projs
+echo ""
+echo 'Ok! Subido!!'
+rm -r $nome
