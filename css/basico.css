@@ -1,0 +1,88 @@
+html {
+    width:900px;
+    height:100%;
+    margin:0;
+    padding: 0;
+}
+
+body {
+    font-family: 'pt sans';
+    font-size: 13px;
+    min-height: 100%;
+}
+
+.texto {
+    font-family: 'pt sans';
+    font-size: 14px;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.leia_mais {
+    font-family: 'pt sans';
+    font-size: 12px;
+    text-align: justify;
+    text-justify: inter-word;
+    font-weight: bold;
+}
+
+.titulo {
+    font-family: 'pt sans';
+    font-size: 26px;
+    font-weight: bold;
+}
+
+hr {
+    width:50%;
+    margin: 0px;
+}
+
+div.grafico {
+    height: 0;
+    padding-top: 65%;
+    position: relative;
+}
+
+svg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+#grafico_fies{
+    width:100%;
+    height:100%;
+    margin:0;
+    padding: 0;
+}
+
+.titulo_grafico {
+    text-anchor:middle;
+    font-family:sans-serif;
+    font-weight:bold;
+    font-size:22px;
+}
+
+.dimple-axis {
+    font-size:18px !important;
+}
+
+rect.dimple-tooltip {
+    fill: #FFD8A3 !important;
+    stroke: #E9A083 !important;
+}
+
+text.dimple-tooltip {
+    font-size:16px !important;
+}
+
+text.dimple-legend {
+    font-size:16px !important;
+}
+
+.color-default {
+    stroke: #8f598f !important;
+    fill: #8f597d !important;
+}

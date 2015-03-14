@@ -3,7 +3,8 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 echo ""
 echo "Descompactando arquivos..."
 echo ""
-tar -zxvf $DIR/postador.tar.gz -C $DIR
+mkdir $DIR/postador
+unzip -q $DIR/postador.zip -d $DIR/postador
 echo "Arquivos descompactados!"
 echo ""
 echo "Por favor, coloque a chave da sua tabela do Google Drive"
