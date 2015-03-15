@@ -1,14 +1,11 @@
-var chave_planilha = "1P3LnfA-uA4EVCVHiPfqabLI-oCRHNf4Kb9UXoOk2Cbo" //link do modelo
-
-
 //var chave_planilha = "12uJCNURJ-8AinCrLfzi24DKHhj6aFGMota46Z9hFkh0" //link do modelo
 /**
  * Created by rodrigoburg on 09/02/15.
  */
 var width = $("body").width()* 0.9
-var height = 650
+var height = 550
 var margins = {
-    bottom:200,
+    bottom:110,
     left:60,
     right:70,
     top:80
@@ -122,6 +119,7 @@ var cria_tags = function (callback) {
                         legenda:item["legenda"],
                         ordem_legenda:item["ordem_legenda"],
                         cores:item["cores"],
+                        ordem_x:item["ordem_x"],
                         outros:item["outros"]
                     },
                     contador_graficos++
@@ -164,9 +162,10 @@ function desenha_grafico(item) {
             tipo_y = item["tipo_y"],
             serie = item["serie"],
             legenda = item["legenda"],
-            ordem_legenda = item["ordem_legenda"].split(","),
+            ordem_legenda = (item["ordem_legenda"]) ? item["ordem_legenda"].split(",") : null,
             index = item["contador"],
-            cores = item["cores"].split(","),
+            cores = (item["cores"]) ? item["cores"].split(",") : null,
+            ordem_x = (item["ordem_x"]) ? item["ordem_x"].split(",") : null,
             outros = (item["outros"]) ? item["outros"].split(",") : null
 
         var cores_default = [
@@ -194,7 +193,10 @@ function desenha_grafico(item) {
         } else if (tipo_x == "time" || tipo_x == "tempo") {
              var x = myChart.addTimeAxis("x",x,"%y","%y")
         }
-
+        
+        if (ordem_x) {
+            x.addOrderRule(ordem_x)
+        }
 
         if (tipo_y == "valor") {
             var y = myChart.addMeasureAxis("y", y);
@@ -226,7 +228,6 @@ function desenha_grafico(item) {
             }
         }
 
-
         if (cores) {
             for (c in cores) {
                 var temp = cores[c].split("=")
@@ -234,11 +235,11 @@ function desenha_grafico(item) {
             }
 
         } else {
-            var cores = []
+            var cores_ = []
             for (c in cores_default) {
-                cores.append(new dimple.color(cores_default[c]))
+                cores_.push(new dimple.color(cores_default[c]))
             }
-            myChart.defaultColors = shuffle(cores);
+            myChart.defaultColors = shuffle(cores_);
         }
 
         //series.lineWeight = 1.8;
