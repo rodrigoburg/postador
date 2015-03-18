@@ -1,3 +1,4 @@
+var chave_planilha = "1cR20il_LrQgtq8F5HfFADhFqC0-ksU6xjSA0EZ-50gg"
 //var chave_planilha = "12uJCNURJ-8AinCrLfzi24DKHhj6aFGMota46Z9hFkh0" //link do modelo
 /**
  * Created by rodrigoburg on 09/02/15.
@@ -6,7 +7,7 @@ var width = $("body").width()* 0.9
 var height = 550
 var margins = {
     bottom:110,
-    left:60,
+    left:70,
     right:70,
     top:80
 }
@@ -100,6 +101,14 @@ var cria_tags = function (callback) {
             var contador_graficos = 0
             for (key in this.pagina) {
                 var item = pagina[key]
+                if ("assinatura" in item) {
+                    var assinatura = item["assinatura"].split("<P>")
+                    for (a in assinatura) {
+                        el.append("<p class=assinatura>"+assinatura[a]+"</p>")
+                    }
+                    el.append("<hr class=assinatura>")
+                }
+
                 if ("titulo" in item) {
                     el.append("<p class=titulo>"+item["titulo"]+"</p>")
                 }

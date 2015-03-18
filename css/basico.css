@@ -32,6 +32,24 @@ body {
     font-weight: bold;
 }
 
+p.assinatura {
+    font-family: Arial;
+    font-size: 1em;
+    line-height: 1.5em;
+    letter-spacing: 0;
+    text-align: left;
+    word-spacing: 0;
+    text-decoration: none;
+    font-weight: bold !important;
+    font-style: italic !important;
+    padding-bottom: 0;
+    line-height: 60%;
+}
+
+hr.assinatura {
+    width:15% !important;
+}
+
 hr {
     width:50%;
     margin: 0px;
@@ -61,8 +79,7 @@ svg {
 .titulo_grafico {
     text-anchor:middle;
     font-family:sans-serif;
-    font-weight:bold;
-    font-size:22px;
+    font-size:18px;
 }
 
 .dimple-axis {
