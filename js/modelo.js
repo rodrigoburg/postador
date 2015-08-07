@@ -1,8 +1,9 @@
-//var chave_planilha = "12uJCNURJ-8AinCrLfzi24DKHhj6aFGMota46Z9hFkh0" //link do modelo
+//var chave_planilha = "1Is21tEKrGxFqCx4WpmA30bVG4o755Bd51BvGKQBmyy8" //link do modelo
+
 /**
  * Created by rodrigoburg on 09/02/15.
  */
-var id_grafico = chave_planilha.substr(8).replace("_","").replace("-","")
+var id_grafico = chave_planilha.substr(25).replace("_","").replace("-","")
 
 var width = $("body").width()* 0.9
 var height = 550
@@ -185,7 +186,6 @@ function desenha_grafico(item) {
                 outros[temp[0]] = temp[1]
             }
         }
-
         var cores_default = [
             "#A11217",
             "#BA007C",
@@ -227,6 +227,18 @@ function desenha_grafico(item) {
             var y = myChart.addMeasureAxis("y", y);
         } else if (tipo_y == "categorico" || tipo_y == "categórico" || tipo_y == "categoria" || tipo_y == "categorica" || tipo_y == "categórica") {
             var y = myChart.addCategoryAxis("y", y);
+        }
+        
+        if (outros) {
+            if ("min_y" in outros) {
+                y.overrideMin(parseInt(outros["min_y"]))
+            } else if ("max_y" in outros) {
+                y.overrideMax(parseInt(outros["max_y"]))
+            } else if ("min_x" in outros) {
+                x.overrideMin(parseInt(outros["min_x"]))
+            } else if ("max_x" in outros) {
+                x.overrideMax(parseInt(outros["max_x"]))
+            }
         }
 
         x.fontSize = "12px"
