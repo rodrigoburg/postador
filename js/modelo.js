@@ -1,4 +1,3 @@
-var chave_planilha = "1LlwXjsOKimdDIJOI8AoUzwnFuFKO8_bKXfSYZC4vPL4" //link do modelo
 //var chave_planilha = "15rYAFLkga7NQrt4B_pzkhMriXRAw3uij5NzH34XQYpw" //link do modelo
 
 /**
