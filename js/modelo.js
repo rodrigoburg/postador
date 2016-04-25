@@ -1,4 +1,5 @@
-//var chave_planilha = "1Is21tEKrGxFqCx4WpmA30bVG4o755Bd51BvGKQBmyy8" //link do modelo
+var chave_planilha = "1LlwXjsOKimdDIJOI8AoUzwnFuFKO8_bKXfSYZC4vPL4" //link do modelo
+//var chave_planilha = "15rYAFLkga7NQrt4B_pzkhMriXRAw3uij5NzH34XQYpw" //link do modelo
 
 /**
  * Created by rodrigoburg on 09/02/15.
@@ -18,6 +19,7 @@ var pagina = null
 var baixar = {}
 var url_base = "https://spreadsheets.google.com/feeds/cells/"+chave_planilha+"/"
 var url_final = "/public/values?alt=json"
+var primeiro = true;
 
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex ;
@@ -112,7 +114,30 @@ var cria_tags = function (callback) {
                 }
 
                 if ("titulo" in item) {
+                    if (primeiro) {
+                        primeiro = false;
+                    } else {
+                        el.append("<hr>") //adiciona barra horizontal se não for o primeiro
+                    }                    
                     el.append("<p class=titulo>"+item["titulo"]+"</p>")
+                }
+                if ("texto" in item) {
+                    var texto = item["texto"].split("<P>")
+                    for (t in texto) {
+                        el.append("<p class=texto>"+texto[t]+"</p>")
+                    }
+                }
+                if ("leia_mais" in item) {
+                    var leia_mais = item["leia_mais"].split("<P>")
+                    el.append("<p class=leia_mais>Leia mais:")
+                    el.append("<ul>")
+                    for (l in leia_mais) {
+                        var texto = leia_mais[l].split(" - ")[0]
+                        var link = leia_mais[l].split(" - ")[1]
+                        el.append("<li><a target=blank' href='"+link+"'>"+texto+"</a></li>")
+                    }
+                    el.append("</ul>")
+                    el.append("</p>")
                 }
                 if ("num_planilha_dados" in item) {
                     var index = item["num_planilha_dados"]
@@ -135,25 +160,8 @@ var cria_tags = function (callback) {
                     },
                     contador_graficos++
                 }
-                if ("texto" in item) {
-                    var texto = item["texto"].split("<P>")
-                    for (t in texto) {
-                        el.append("<p class=texto>"+texto[t]+"</p>")
-                    }
-                }
-                if ("leia_mais" in item) {
-                    var leia_mais = item["leia_mais"].split("<P>")
-                    el.append("<p class=leia_mais>Leia mais:")
-                    el.append("<ul>")
-                    for (l in leia_mais) {
-                        var texto = leia_mais[l].split(" - ")[0]
-                        var link = leia_mais[l].split(" - ")[1]
-                        el.append("<li><a target=blank' href='"+link+"'>"+texto+"</a></li>")
-                    }
-                    el.append("</ul>")
-                    el.append("</p>")
-                }
-                el.append("<hr><br>")
+
+                el.append("<br>")
             }
         }
     });
@@ -221,6 +229,7 @@ function desenha_grafico(item) {
 
         if (ordem_x) {
             x.addOrderRule(ordem_x)
+            x.addGroupOrderRule(ordem_x)
         }
 
         if (tipo_y == "valor") {
@@ -228,7 +237,7 @@ function desenha_grafico(item) {
         } else if (tipo_y == "categorico" || tipo_y == "categórico" || tipo_y == "categoria" || tipo_y == "categorica" || tipo_y == "categórica") {
             var y = myChart.addCategoryAxis("y", y);
         }
-        
+
         if (outros) {
             if ("min_y" in outros) {
                 y.overrideMin(parseInt(outros["min_y"]))
@@ -251,6 +260,7 @@ function desenha_grafico(item) {
         if (serie) {
             lista_series = serie.split(",")
         }
+
         if (tipo_grafico == "bar" || tipo_grafico == "barra") {
             var s = myChart.addSeries(lista_series, dimple.plot.bar);
         } else if (tipo_grafico == "linha" || tipo_grafico == "line") {
@@ -264,11 +274,17 @@ function desenha_grafico(item) {
                 s.interpolation = outros["interpolar"]
             }
         }
+        console.log(titulo_grafico,dados)
+
 
         if (cores) {
             for (c in cores) {
-                var temp = cores[c].split("=")
-                myChart.assignColor(temp[0],cores_default[temp[1]])
+                var temp = cores[c].split("=")                
+                if (temp[1].substring(0,1) == '#') {
+                    myChart.assignColor(temp[0],temp[1])
+                } else {
+                    myChart.assignColor(temp[0],cores_default[temp[1]])
+                }                
             }
 
         } else {
@@ -343,6 +359,16 @@ function desenha_grafico(item) {
                     }
                 );
             }
+            if ("traslada90" in outros) {
+                //translada labels do eixo x
+                x.shapes.selectAll("text").attr("transform",
+                    function (d) {
+                        //return d3.select(this).attr("transform") + " translate(-14, 38) rotate(-90)";
+                        return d3.select(this).attr("transform") + " translate(70, 120) rotate(-90)";
+                    }
+                );
+            }
+
         }
 
     })
@@ -361,3 +387,4 @@ function chama_erro(erro) {
 }
 
 iniciar()
+
